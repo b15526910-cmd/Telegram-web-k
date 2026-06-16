@@ -8,7 +8,7 @@
     "start": "vite",
     "start-in-docker": "vite --host",
     "serve": "pnpm run build; node server.js",
-    "build": "vite build",
+    "build": "node build",
     "test": "vitest",
     "whybundled": "pnpm run profile && whybundled stats.json",
     "generate-mtproto-types": "node ./src/scripts/generate_mtproto_types.js src/",
