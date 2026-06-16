@@ -9,7 +9,7 @@ import checker from 'vite-plugin-checker';
 // import devtools from 'solid-devtools/vite'
 import autoprefixer from 'autoprefixer';
 import {resolve} from 'path';
-import {existsSync, copyFileSync, readFileSync} from 'fs';
+import {existsSync, copyFileSync, readFileSync, readdirSync, statSync} from 'fs';
 import {ServerOptions} from 'vite';
 import {watchLangFile} from './watch-lang.js';
 import path from 'path';
@@ -51,6 +51,42 @@ const DEV_HTTP2_KEY = path.join(certsDir, 'localhost-key.pem');
 const DEV_HTTP2_CERT = path.join(certsDir, 'localhost.pem');
 const USE_DEV_HTTP2 = !USE_SSL && !process.env.TWEB_PREVIEW && !process.env.VITEST &&
   existsSync(DEV_HTTP2_KEY) && existsSync(DEV_HTTP2_CERT);
+
+// Helper function to recursively copy directory
+const copyDirRecursive = (src: string, dest: string) => {
+  if(!existsSync(dest)) {
+    const parent = path.dirname(dest);
+    if(!existsSync(parent)) {
+      copyDirRecursive(parent, parent);
+    }
+    require('fs').mkdirSync(dest);
+  }
+  const files = readdirSync(src, {withFileTypes: true});
+  files.forEach((file) => {
+    const srcPath = path.join(src, file.name);
+    const destPath = path.join(dest, file.name);
+    if(file.isDirectory()) {
+      copyDirRecursive(srcPath, destPath);
+    } else {
+      copyFileSync(srcPath, destPath);
+    }
+  });
+};
+
+// Vite plugin to copy public/assets to dist/assets
+const copyPublicAssetsPlugin = {
+  name: 'copy-public-assets',
+  writeBundle() {
+    const publicAssetsPath = resolve(rootDir, 'public/assets');
+    const distAssetsPath = resolve(rootDir, 'dist/assets');
+    
+    if(existsSync(publicAssetsPath)) {
+      console.log('Copying public/assets to dist/assets...');
+      copyDirRecursive(publicAssetsPath, distAssetsPath);
+      console.log('Assets copied successfully');
+    }
+  }
+};
 
 const serverOptions: ServerOptions = {
   host,
@@ -125,7 +161,8 @@ export default defineConfig({
     process.env.ANALYZE ? visualizer({
       gzipSize: true,
       template: 'treemap'
-    }) : undefined
+    }) : undefined,
+    copyPublicAssetsPlugin
   ].filter(Boolean),
   test: {
     exclude: [
