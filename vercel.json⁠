@@ -1,4 +1,3 @@
 {
-  "buildCommand": "pnpm install && node build",
-  "outputDirectory": "public"
+  "outputDirectory": "dist"
 }
