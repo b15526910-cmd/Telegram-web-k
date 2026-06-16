@@ -147,6 +147,35 @@ export class AppSidebarLeft extends SidebarSlider {
     this.managers = managers;
 
     this.chatListContainer = document.getElementById('chatlist-container');
+    if(this.chatListContainer && localStorage.getItem('toki_banner_hidden') !== 'true') {
+      const banner = document.createElement('div');
+      banner.className = 'toki-sidebar-banner';
+
+      const bannerText = document.createElement('span');
+      bannerText.className = 'toki-sidebar-banner__text';
+      bannerText.textContent = 'Следите за обновлениями Toki в нашем официальном канале!';
+
+      const bannerLink = document.createElement('a');
+      bannerLink.className = 'toki-sidebar-banner__button';
+      bannerLink.href = 'https://t.me/tokiWebKPR';
+      bannerLink.target = '_blank';
+      bannerLink.rel = 'noopener noreferrer';
+      bannerLink.textContent = 'Перейти';
+
+      const closeButton = document.createElement('button');
+      closeButton.className = 'toki-sidebar-banner__close';
+      closeButton.type = 'button';
+      closeButton.setAttribute('aria-label', 'Close banner');
+      closeButton.textContent = '✕';
+      closeButton.addEventListener('click', () => {
+        localStorage.setItem('toki_banner_hidden', 'true');
+        banner.remove();
+      });
+
+      banner.append(bannerText, bannerLink, closeButton);
+      this.chatListContainer.prepend(banner);
+    }
+
     this.inputSearch = new InputSearch({oldStyle: true});
     (this.inputSearch.input as HTMLInputElement).placeholder = ' ';
     const sidebarHeader = this.sidebarEl.querySelector('.item-main .sidebar-header');
@@ -1633,7 +1662,7 @@ function getVersionLink() {
   });
   const t = document.createElement('span');
   t.classList.add('btn-menu-footer-text');
-  t.textContent = `Telegram Web${App.suffix} ${App.version} (${App.build})`;
+  t.textContent = `Toki${App.suffix} ${App.version} (${App.build})`;
   btnMenuFooter.append(t);
 
   return btnMenuFooter;

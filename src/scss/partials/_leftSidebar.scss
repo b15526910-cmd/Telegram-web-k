@@ -8,6 +8,73 @@
   display: flex;
   flex-direction: column;
 
+  .toki-sidebar-banner {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin: .65rem .75rem .5rem;
+    padding: .65rem .7rem;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.06);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 6px 18px rgba(0, 0, 0, 0.18);
+    position: relative;
+    z-index: 1;
+
+    &__text {
+      flex: 1 1 auto;
+      font-size: .78rem;
+      line-height: 1.2;
+      color: var(--color-text-primary, #f5f7fb);
+      letter-spacing: .01em;
+    }
+
+    &__button {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: .38rem .72rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      color: var(--color-text-primary, #f5f7fb);
+      font-size: .78rem;
+      font-weight: 600;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background-color var(--transition-standard-in), transform var(--transition-standard-in);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.14);
+      }
+
+      &:active {
+        transform: scale(.98);
+      }
+    }
+
+    &__close {
+      flex: 0 0 auto;
+      appearance: none;
+      background: transparent;
+      border: 0;
+      color: var(--color-text-secondary, #b7bfd6);
+      font-size: .82rem;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background-color var(--transition-standard-in), color var(--transition-standard-in);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--color-text-primary, #f5f7fb);
+      }
+    }
+  }
+
   // Width is owned entirely by JS — helpers/updateColumnWidths.ts sets
   // --left-column-visual-width based on the viewport rules (fixed at
   // --default-column-width in floating mode, user-resizable otherwise).
