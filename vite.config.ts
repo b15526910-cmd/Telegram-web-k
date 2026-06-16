@@ -151,6 +151,7 @@ export default defineConfig({
     target: 'es2020',
     sourcemap: true,
     assetsDir: 'assets',
+    assetsInlineLimit: 40960,
     copyPublicDir: false,
     emptyOutDir: true,
     minify: NO_MINIFY ? false : undefined,
