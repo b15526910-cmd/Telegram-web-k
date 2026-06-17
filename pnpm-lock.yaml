@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    optionalDependencies:
+      node-ssh:
+        specifier: ^13.1.0
+        version: 13.1.0
     devDependencies:
       '@babel/cli':
         specifier: ^7.23.4
@@ -128,9 +132,6 @@ importers:
       mime:
         specifier: ^3.0.0
         version: 3.0.0
-      node-ssh:
-        specifier: ^13.1.0
-        version: 13.1.0
       prismjs:
         specifier: ^1.29.0
         version: 1.29.0
@@ -4735,6 +4736,7 @@ snapshots:
   '@types/node@18.19.4':
     dependencies:
       undici-types: 5.26.5
+    optional: true
 
   '@types/node@20.10.6':
     dependencies:
@@ -4761,6 +4763,7 @@ snapshots:
   '@types/ssh2@1.11.18':
     dependencies:
       '@types/node': 18.19.4
+    optional: true
 
   '@types/ws@8.18.1':
     dependencies:
@@ -4962,6 +4965,7 @@ snapshots:
   asn1@0.2.6:
     dependencies:
       safer-buffer: 2.1.2
+    optional: true
 
   asn1js@3.0.5:
     dependencies:
@@ -5028,6 +5032,7 @@ snapshots:
   bcrypt-pbkdf@1.0.2:
     dependencies:
       tweetnacl: 0.14.5
+    optional: true
 
   big-integer@1.6.52: {}
 
@@ -5688,7 +5693,8 @@ snapshots:
 
   is-promise@4.0.0: {}
 
-  is-stream@2.0.1: {}
+  is-stream@2.0.1:
+    optional: true
 
   is-what@4.1.16: {}
 
@@ -5837,6 +5843,7 @@ snapshots:
   make-dir@3.1.0:
     dependencies:
       semver: 6.3.1
+    optional: true
 
   math-intrinsics@1.1.0: {}
 
@@ -5916,6 +5923,7 @@ snapshots:
       sb-scandir: 3.1.0
       shell-escape: 0.2.0
       ssh2: 1.15.0
+    optional: true
 
   normalize-path@3.0.0:
     optional: true
@@ -6190,11 +6198,13 @@ snapshots:
     dependencies:
       xmlchars: 2.2.0
 
-  sb-promise-queue@2.1.0: {}
+  sb-promise-queue@2.1.0:
+    optional: true
 
   sb-scandir@3.1.0:
     dependencies:
       sb-promise-queue: 2.1.0
+    optional: true
 
   semver@5.7.2: {}
 
@@ -6237,7 +6247,8 @@ snapshots:
 
   shebang-regex@3.0.0: {}
 
-  shell-escape@0.2.0: {}
+  shell-escape@0.2.0:
+    optional: true
 
   side-channel-list@1.0.0:
     dependencies:
@@ -6298,6 +6309,7 @@ snapshots:
     optionalDependencies:
       cpu-features: 0.0.9
       nan: 2.18.0
+    optional: true
 
   stackback@0.0.2: {}
 
@@ -6372,7 +6384,8 @@ snapshots:
 
   tslib@2.6.2: {}
 
-  tweetnacl@0.14.5: {}
+  tweetnacl@0.14.5:
+    optional: true
 
   type-check@0.4.0:
     dependencies:
