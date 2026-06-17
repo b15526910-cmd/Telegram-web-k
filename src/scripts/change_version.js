@@ -51,7 +51,7 @@ if(changelog !== 'same') {
   const insert = Buffer.from(lines.join('\n') + '\n\n');
   fs.writeSync(fd, insert, 0, insert.length, 0);
   fs.writeSync(fd, data, 0, data.length, insert.length);
-  fs.close(fd, () => {
-    process.exit(0);
-  });
+  fs.closeSync(fd);
 }
+
+process.exit(0);
