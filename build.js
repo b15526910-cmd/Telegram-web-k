@@ -4,7 +4,12 @@ const {spawn, execSync} = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const keepAsset = require('./keepAsset');
-const {NodeSSH} = require('node-ssh');
+let NodeSSH;
+try {
+  NodeSSH = require('node-ssh').NodeSSH;
+} catch(err) {
+  NodeSSH = null;
+}
 const zlib = require('zlib');
 
 const npmCmd = /^win/.test(process.platform) ? 'npm.cmd' : 'npm';
@@ -142,6 +147,11 @@ const onCompiled = async() => {
   const sshConfig = readSSHConfig();
   if(!sshConfig) {
     console.log('No SSH config, skipping upload');
+    return;
+  }
+
+  if(!NodeSSH) {
+    console.log('⚠ node-ssh not available (optionalDependency), skipping SSH upload');
     return;
   }
 

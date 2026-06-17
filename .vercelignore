@@ -7,7 +7,6 @@ node_modules/.pnpm/cpu-features@*
 node_modules/.pnpm/ssh2@*
 .next
 .nuxt
-build
 coverage
 *.log
 .DS_Store
@@ -15,8 +14,6 @@ coverage
 .idea
 *.swp
 *.swo
-src
-scripts
 snapshot-server
 rlottie_with_printf
 docker-compose.yaml
