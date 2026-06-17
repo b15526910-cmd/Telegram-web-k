@@ -3,10 +3,10 @@
 .claude
 .env.local
 .env.*.local
-node_modules
+node_modules/.pnpm/cpu-features@*
+node_modules/.pnpm/ssh2@*
 .next
 .nuxt
-dist
 build
 coverage
 *.log
@@ -27,3 +27,5 @@ CODE_DUPLICATIONS.md
 REVIEW.md
 TELEGRAM_FEATURES.md
 *.example.ts
+
+

@@ -58,14 +58,21 @@ function changeVersion(langVersion) {
   const version = process.argv[2] || 'same';
   const changelog = process.argv[3] || 'same';
   const child = spawn(npmCmd, ['run', 'change-version', version, changelog, langVersion], {shell: true});
+  let stderr = '';
+  
   child.stdout.on('data', (chunk) => {
     console.log(chunk.toString());
+  });
+  
+  child.stderr.on('data', (chunk) => {
+    stderr += chunk.toString();
+    console.error(chunk.toString());
   });
 
   return new Promise((resolve, reject) => {
     child.on('close', (code) => {
       if(code != 0) {
-        reject(new Error('Failed to change version'));
+        reject(new Error(`Failed to change version (exit code ${code}): ${stderr}`));
       } else {
         resolve();
       }
@@ -76,17 +83,28 @@ function changeVersion(langVersion) {
 function applyNewLang() {
   const child = spawn(npmCmd, ['run', 'apply-new-lang'], {shell: true});
   let data = '';
+  let stderr = '';
+  
   child.stdout.on('data', (chunk) => {
     data += chunk.toString();
+  });
+  
+  child.stderr.on('data', (chunk) => {
+    stderr += chunk.toString();
+    console.error(chunk.toString());
   });
 
   return new Promise((resolve, reject) => {
     child.on('close', (code) => {
       if(code != 0) {
-        reject(new Error('Failed to apply new lang'));
+        reject(new Error(`Failed to apply new lang (exit code ${code}): ${stderr}`));
       } else {
-        const version = +data.trim().split(/[\r\n]/).pop();
-        resolve(version);
+        try {
+          const version = +data.trim().split(/[\r\n]/).pop();
+          resolve(version);
+        } catch(e) {
+          reject(new Error(`Failed to parse lang version: ${e.message}`));
+        }
       }
     });
   });
@@ -94,14 +112,21 @@ function applyNewLang() {
 
 function formatLang() {
   const child = spawn(npmCmd, ['run', 'format-lang'], {shell: true});
+  let stderr = '';
+  
   child.stdout.on('data', (chunk) => {
     console.log(chunk.toString());
+  });
+  
+  child.stderr.on('data', (chunk) => {
+    stderr += chunk.toString();
+    console.error(chunk.toString());
   });
 
   return new Promise((resolve, reject) => { 
     child.on('close', (code) => {
       if(code != 0) {
-        reject(new Error('Failed to format lang'));
+        reject(new Error(`Failed to format lang (exit code ${code}): ${stderr}`));
       } else {
         resolve();
       }
@@ -182,30 +207,50 @@ function compressFolder(folderPath) {
   console.log(`stderr: ${stderr}`);
 }); */
 
-formatLang()
-.then(applyNewLang)
-.then((version) => {
-  console.log('Applied new lang', version);
-  return changeVersion(version);
-}, () => {
-  console.error('Failed to apply new lang');
-  return changeVersion('same');
-}).then(() => {
-  const child = spawn(npmCmd, ['run', 'build'], {shell: true});
-  child.stdout.on('data', (chunk) => {
-    console.log(chunk.toString());
-  });
+// Check if we're on Vercel (production build)
+const isProduction = process.env.VERCEL || process.env.CI;
 
-  let error = '';
-  child.stderr.on('data', (chunk) => {
-    error += chunk.toString();
-  });
+const buildSequence = isProduction
+  ? Promise.resolve()
+      .then(() => {
+        console.log('Production build detected, skipping language formatting');
+        return 'same';
+      })
+  : formatLang()
+      .then(applyNewLang)
+      .catch((err) => {
+        console.warn('⚠ Failed to apply new lang:', err.message);
+        return 'same';
+      });
 
-  child.on('close', (code) => {
-    if(code != 0) {
-      console.error(error, `build child process exited with code ${code}`);
-    } else {
-      onCompiled();
+buildSequence
+  .then((version) => {
+    if(version !== 'same') {
+      console.log('Applied new lang', version);
     }
+    return changeVersion(version);
+  })
+  .catch((err) => {
+    console.error('✗ Failed to change version:', err.message);
+    process.exit(1);
+  })
+  .then(() => {
+    const child = spawn(npmCmd, ['run', 'build'], {shell: true});
+    child.stdout.on('data', (chunk) => {
+      console.log(chunk.toString());
+    });
+
+    let error = '';
+    child.stderr.on('data', (chunk) => {
+      error += chunk.toString();
+    });
+
+    child.on('close', (code) => {
+      if(code != 0) {
+        console.error(error, `build child process exited with code ${code}`);
+        process.exit(code);
+      } else {
+        onCompiled();
+      }
+    });
   });
-});
